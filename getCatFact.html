@@ -1,0 +1,53 @@
+<HTML>
+<HEAD>
+	<TITLE>Cat Facts API with jQuery</TITLE>
+	<script type = "text/javascript" 
+		src = "http://code.jquery.com/jquery-latest.js">
+	</script> 
+</HEAD>
+<BODY>
+<script>
+$(document).ready(function(){
+	$('#submit').click(function(){
+		var apiURL = "https://catfacts-api.appspot.com/api/facts?number=1";
+		//Using YQL to get api response, since api does not support callbacks cannot use getJSON
+		apiURL = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from html where url="' + apiURL + '"') + '&format=xml';
+		$('#logData').html('<p>API Call:'+apiURL+'</p>');
+		$.ajax({
+			type: "GET",
+			url: apiURL,
+			success: function(text){
+				$('#logData').append('<p>YQL WORKED!</p>'+text);
+				// Hacky way of parasing the json string obtained from catfacts
+				var splitTextArray = [];
+				splitTextArray = text.split("[");
+				splitTextArray = splitTextArray[1].split("]");
+				splitTextArray = splitTextArray[0].split('"');
+				catFact = splitTextArray[1];
+				$('#catFact').html(catFact);
+
+				$('#logData').append('<p>Split WORKED!</p>'+catFact);
+				},
+			error: function(){
+				alert("Error");
+			},
+			dataType: "text"
+		});
+
+		
+	});
+
+});
+</script>
+<div id = "catFact">Fact Goes here</div>
+
+
+<div id = "buttonDiv">
+<input type = "button" id = "submit" value = "Get Fact">
+</div>
+<div><br>LOG:<br></div> 
+<div id = "logData">Log:<br></div>
+
+
+</BODY>
+</HTML>
